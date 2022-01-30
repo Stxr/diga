@@ -6,3 +6,4 @@ contextBridge.exposeInMainWorld("ipcRenderer", {
     ipcRenderer.on(event, callback)
   }
 })
+// contextBridge.exposeInMainWorld("argv", process.argv)

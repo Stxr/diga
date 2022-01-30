@@ -6,15 +6,51 @@
 // process.
 window.onload = () => {
     console.log('onload')
+    window.ipcRenderer.send('onload')
+    var log = ""
+    var env = {}
     const btn = document.getElementById('btn')
     btn.onclick = () => {
         console.log('click')
-        document.getElementById('btn').setAttribute("value", "clicked")
-        window.ipcRenderer.send('click', '66666')
+        document.getElementById('btn').setAttribute("value", "running")
+        window.ipcRenderer.send('cmd', {
+            cmd: 'ls -a',
+            dir: env.pwd
+        })
+        log = ""
     }
-    window.ipcRenderer.on('click1', (event, arg) => {
-        console.log('click in renderer process')
-        document.getElementById('btn').setAttribute("value", "click in renderer process")
+    window.ipcRenderer.on('cmd-close', (event, arg) => {
+        printLog(log)
+        document.getElementById('btn').setAttribute("value", "start")
     })
+    window.ipcRenderer.on('cmd-data', (event, arg) => {
+        log += arg
+    })
+
+
+    window.ipcRenderer.on('window-info', (event, arg) => {
+        printLog(arg)
+        env = arg
+    })
+}
+function printLog(str, mode = 'append', domId = 'log', domWrapper = "log-wrapper") {
+    console.log(str)
+    if (str instanceof Array) {
+        str = str.map((item, index) => {
+            return `${index}: "${item}"`
+        }).join('\n')
+    } else if (str instanceof Object) {
+        str = JSON.stringify(str, null, 2)
+    }
+    const logDom = document.getElementById(domId)
+    const logWrapperDom = document.getElementById(domWrapper)
+    const preLog = logDom.innerHTML
+    if (mode === 'append') {
+        logDom.innerHTML = preLog + str
+        logWrapperDom.scrollTop = logWrapperDom.scrollHeight
+        console.log(logDom.scrollHeight)
+    } else if (mode === 'overwrite') {
+        logDom.innerHTML = str
+    }
 
 }

@@ -1,16 +1,16 @@
 // Modules to control application life and create native browser window
 const { app, BrowserWindow, ipcMain, contextBridge, ipcRenderer } = require('electron')
 const path = require('path')
-
+const { runCmd } = require('./cmdRunner')
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     frame: false,
-    maxHeight: 300,
-    maxWidth: 300,
+    // maxHeight: 300,
+    // maxWidth: 300,
     transparent: true,
-    width: 100,
-    height: 100,
+    width: 500,
+    height: 500,
     alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -18,9 +18,12 @@ function createWindow() {
   })
   // mainWindow.setWindowButtonVisibility(false)
   // mainWindow.setAspectRatio(1.6)
-  // and load the index.html of the app.
+  // mainWindow.setIgnoreMouseEvents(true)
   mainWindow.loadFile('index.html')
-
+  // and load the index.html of the app.
+  // ipcMain.emit('window-info', {
+  //   argv: process.argv
+  // })
   // Open the DevTools.
   // mainWindow.webContents.openDevTools()
 }
@@ -45,8 +48,28 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
-ipcMain.on('click', (event, arg) => {
-  createWindow()
+
+ipcMain.on('onload', (event, arg) => {
+  console.log('onload')
+  console.log('argv', process.argv)
+  event.sender.send('window-info', {
+    argv: process.argv,
+    pwd: process.cwd()
+  })
+})
+
+ipcMain.on('cmd', (event, arg) => {
+  console.log(arg)
+  runCmd(arg.cmd, arg.dir, {
+    onClose: () => {
+      event.sender.send('cmd-close')
+    },
+    onData: (data) => {
+      const str = data.toString()
+      event.sender.send('cmd-data', str)
+    }
+  })
+  // createWindow()
   // console.log("click in main process")
   // event.sender.send('click1', "7777")
 })

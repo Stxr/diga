@@ -10,8 +10,16 @@
   <title>demo</title>
 </head>
 
-<body style="margin: 0px 0px;">
-  <input class="full_btn" id="btn" type="button" value="12" />
+<body class="margin-0">
+  <div class="bg-primary flex-column ">
+    <div style="flex: 1;"></div>
+    <text id="title" style="flex:2" class="align-self-center large">title</text>
+    <div id="log-wrapper" style="overflow-y: scroll;max-height: 60vh; background-color:cadetblue;">
+      <text id="log" class="align-self-center small"></text>
+    </div>
+    <input class="full_btn" id="btn" type="button" value="start" />
+  </div>
+  <!-- <input class="" id="btn" type="button" value="12" /> -->
   <!-- You can also require other files to run in this process -->
   <script src="./renderer.js"></script>
 </body>
