@@ -14,7 +14,7 @@ window.onload = () => {
         console.log('click')
         document.getElementById('btn').setAttribute("value", "running")
         window.ipcRenderer.send('cmd', {
-            cmd: 'ls -a',
+            cmd: env.argv.slice(1),
             dir: env.pwd
         })
         log = ""

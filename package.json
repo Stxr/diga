@@ -1,23 +1,21 @@
 {
-  "name": "electron-quick-start",
+  "name": "diga",
   "version": "1.0.0",
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
+    "test":"electron . ls -l",
     "start": "electron-forge start",
-    "package": "electron-forge package",
+    "package": "DEBUG=electron-packager electron-forge package",
     "make": "electron-forge make"
   },
-  "repository": "https://github.com/electron/electron-quick-start",
+  "repository": "https://github.com/Stxr/diga/",
   "keywords": [
     "Electron",
-    "quick",
-    "start",
-    "tutorial",
-    "demo"
+    "diga"
   ],
-  "author": "GitHub",
-  "license": "CC0-1.0",
+  "author": "txr",
+  "license": "GPLV3",
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.63",
     "@electron-forge/maker-deb": "^6.0.0-beta.63",
@@ -37,7 +35,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "electron_quick_start"
+            "name": "diga"
           }
         },
         {

@@ -3,7 +3,9 @@ function runCmd(cmdStr, dir, cb) {
     const { cmd, args } = getCmd(cmdStr)
     const result = spawn(cmd, args, {
         cwd: dir,
-        shell: true
+        shell: true,
+        // stdio: 'inherit',
+        detached: true
     })
     result.stdout.on('close', () => {
         cb && cb.onClose && cb.onClose()
@@ -16,7 +18,12 @@ function runCmd(cmdStr, dir, cb) {
 }
 
 function getCmd(cmd) {
-    const args = cmd.split(' ')
+    let args = []
+    if (cmd instanceof Array) {
+        args = cmd
+    } else {
+        args = cmd.split(' ')
+    }
     return {
         cmd: args[0],
         args: args.slice(1) || []

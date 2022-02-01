@@ -1,5 +1,5 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain, contextBridge, ipcRenderer } = require('electron')
+const { app, BrowserWindow, ipcMain } = require('electron')
 const path = require('path')
 const { runCmd } = require('./cmdRunner')
 function createWindow() {
@@ -48,7 +48,6 @@ app.whenReady().then(() => {
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
-
 ipcMain.on('onload', (event, arg) => {
   console.log('onload')
   console.log('argv', process.argv)
@@ -60,15 +59,22 @@ ipcMain.on('onload', (event, arg) => {
 
 ipcMain.on('cmd', (event, arg) => {
   console.log(arg)
-  runCmd(arg.cmd, arg.dir, {
-    onClose: () => {
-      event.sender.send('cmd-close')
-    },
-    onData: (data) => {
-      const str = data.toString()
-      event.sender.send('cmd-data', str)
-    }
-  })
+  const cmd = arg.cmd
+  if (cmd) {
+    runCmd(cmd, arg.dir, {
+      onClose: () => {
+        event.sender.send('cmd-close')
+      },
+      onData: (data) => {
+        const str = data.toString()
+        event.sender.send('cmd-data', str)
+      }
+    })
+  } else {
+    console.log(`cmd is ${cmd}`)
+    event.sender.send('cmd-close')
+  }
+
   // createWindow()
   // console.log("click in main process")
   // event.sender.send('click1', "7777")
