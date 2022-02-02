@@ -1,0 +1,16 @@
+nohup: //MacOS/diga: No such file or directory
+nohup: //MacOS/diga: No such file or directory
+nohup: /Users/txr/MacOS/diga: No such file or directory
+nohup: //MacOS/diga: No such file or directory
+nohup: //MacOS/diga: No such file or directory
+nohup: //MacOS/diga: No such file or directory
+[
+  { label: 'diga', submenu: [ [Object] ] },
+  { label: 'Tools', submenu: [ [Object] ] }
+]
+onload
+argv [
+  '/Users/txr/electron/electron-quick-start/out/diga-darwin-x64/diga.app/Contents/MacOS/diga',
+  'ls',
+  '-l'
+]

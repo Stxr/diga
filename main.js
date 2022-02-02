@@ -1,7 +1,8 @@
 // Modules to control application life and create native browser window
-const { app, BrowserWindow, ipcMain } = require('electron')
+const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const path = require('path')
 const { runCmd } = require('./cmdRunner')
+const { createMenu } = require('./menu')
 function createWindow() {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
@@ -33,7 +34,8 @@ function createWindow() {
 // Some APIs can only be used after this event occurs.
 app.whenReady().then(() => {
   createWindow()
-
+  const appMenu = Menu.buildFromTemplate(createMenu(app))
+  Menu.setApplicationMenu(appMenu)
   app.on('activate', function () {
     // On macOS it's common to re-create a window in the app when the
     // dock icon is clicked and there are no other windows open.
@@ -41,6 +43,8 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
+
+
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
