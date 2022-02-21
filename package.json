@@ -4,7 +4,7 @@
   "description": "A minimal Electron application",
   "main": "main.js",
   "scripts": {
-    "test":"electron . ls -l",
+    "test": "electron . ls -l",
     "start": "electron-forge start",
     "package": "DEBUG=electron-packager electron-forge package",
     "make": "electron-forge make"
@@ -26,7 +26,9 @@
   },
   "dependencies": {
     "electron-reload": "^2.0.0-alpha.1",
-    "electron-squirrel-startup": "^1.0.0"
+    "electron-squirrel-startup": "^1.0.0",
+    "electron-store": "^8.0.1",
+    "md5": "^2.3.0"
   },
   "config": {
     "forge": {

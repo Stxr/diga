@@ -9,19 +9,42 @@ window.onload = () => {
     window.ipcRenderer.send('onload')
     var log = ""
     var env = {}
-    const btn = document.getElementById('btn')
-    btn.onclick = () => {
+    const btn_start = document.getElementById('btn_start')
+    const btn_create = document.getElementById('btn_create')
+    const btn_save = document.getElementById('btn_save')
+    const text_title = document.getElementById('title')
+    btn_start.onclick = () => {
         console.log('click')
-        document.getElementById('btn').setAttribute("value", "running")
+        btn_start.setAttribute("value", "running")
         window.ipcRenderer.send('cmd', {
-            cmd: env.argv.slice(1),
+            cmd: env.argv,
             dir: env.pwd
         })
         log = ""
     }
+
+    btn_create.onclick = () => {
+        window.ipcRenderer.send('create', {
+            cmd: env.argv.slice(1),
+            dir: env.pwd,
+            title: text_title.value,
+        })
+    }
+    btn_save.onclick = () => {
+        window.ipcRenderer.send('save', {
+            cmd: env.argv.slice(1),
+            dir: env.pwd,
+            title: text_title.value,
+        })
+    }
+    text_title.onblur = (_, ev) => {
+        printLog(`onblur:${text_title.value}`)
+    }
+
+
     window.ipcRenderer.on('cmd-close', (event, arg) => {
         printLog(log)
-        document.getElementById('btn').setAttribute("value", "start")
+        btn_start.setAttribute("value", "start")
     })
     window.ipcRenderer.on('cmd-data', (event, arg) => {
         log += arg
@@ -31,6 +54,7 @@ window.onload = () => {
     window.ipcRenderer.on('window-info', (event, arg) => {
         printLog(arg)
         env = arg
+        document.getElementById('title').value = env.title
     })
 }
 function printLog(str, mode = 'append', domId = 'log', domWrapper = "log-wrapper") {
@@ -46,7 +70,7 @@ function printLog(str, mode = 'append', domId = 'log', domWrapper = "log-wrapper
     const logWrapperDom = document.getElementById(domWrapper)
     const preLog = logDom.innerHTML
     if (mode === 'append') {
-        logDom.innerHTML = preLog + str
+        logDom.innerHTML = preLog + '\n' + str
         logWrapperDom.scrollTop = logWrapperDom.scrollHeight
         console.log(logDom.scrollHeight)
     } else if (mode === 'overwrite') {

@@ -11,13 +11,17 @@
 </head>
 
 <body class="margin-0">
-  <div class="bg-primary flex-column ">
+  <div class="bg-primary flex-column align-center">
     <div style="flex: 1;"></div>
-    <text id="title" style="flex:2" class="align-self-center large">title</text>
-    <div id="log-wrapper" style="overflow-y: scroll;max-height: 60vh; background-color:cadetblue;">
+    <input id="title" style="flex:2;" class="text-simple text-center text-large" value="title" />
+    <div id="log-wrapper" class="log-wrapper" >
       <text id="log" class="align-self-center small"></text>
     </div>
-    <input class="full_btn" id="btn" type="button" value="start" />
+    <div style="display: flex;justify-content: space-around; " class="align-self-stretch">
+      <input style="flex:1" class="full_btn " id="btn_start" type="button" value="start" />
+      <input style="flex:1" class="full_btn " id="btn_save" type="button" value="save" />
+      <input style="flex:1" class="full_btn " id="btn_create" type="button" value="create" />
+    </div>
   </div>
   <!-- <input class="" id="btn" type="button" value="12" /> -->
   <!-- You can also require other files to run in this process -->

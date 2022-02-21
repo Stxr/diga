@@ -3,15 +3,17 @@ const { app, BrowserWindow, ipcMain, Menu } = require('electron')
 const path = require('path')
 const { runCmd } = require('./cmdRunner')
 const { createMenu } = require('./menu')
-function createWindow() {
+const { getStoreKey } = require('./tools/hash')
+const store = require('./tools/store')
+function createWindow(params = { argv: process.argv.slice(1), pwd: process.cwd(), title: '' }) {
   // Create the browser window.
   const mainWindow = new BrowserWindow({
     frame: false,
     // maxHeight: 300,
     // maxWidth: 300,
     transparent: true,
-    width: 500,
-    height: 500,
+    width: 200,
+    height: 100,
     alwaysOnTop: true,
     webPreferences: {
       preload: path.join(__dirname, 'preload.js')
@@ -21,6 +23,20 @@ function createWindow() {
   // mainWindow.setAspectRatio(1.6)
   // mainWindow.setIgnoreMouseEvents(true)
   mainWindow.loadFile('index.html')
+  // mainWindow.webContents.send('window-info', {
+  //   argv: process.argv.slice(1),
+  //   pwd: process.cwd(),
+  //   title: '666'
+  // })
+  mainWindow.webContents.on('ipc-message', (event, channel, args) => {
+    console.log('ipc-message:', channel, args)
+    event.sender.send('window-info', {
+      argv: params.argv,
+      pwd: params.pwd,
+      title: params.title
+    })
+  })
+
   // and load the index.html of the app.
   // ipcMain.emit('window-info', {
   //   argv: process.argv
@@ -45,20 +61,35 @@ app.whenReady().then(() => {
 })
 
 
-
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
 // explicitly with Cmd + Q.
 app.on('window-all-closed', function () {
   if (process.platform !== 'darwin') app.quit()
 })
-ipcMain.on('onload', (event, arg) => {
-  console.log('onload')
-  console.log('argv', process.argv)
-  event.sender.send('window-info', {
-    argv: process.argv,
-    pwd: process.cwd()
+
+ipcMain.on('save', (event, arg) => {
+  console.log('save:', arg)
+  const { cmd, dir, title } = arg
+  const key = getStoreKey(cmd, dir)
+  store.addStorageKey(key)
+  store.set(key, {
+    cmd,
+    dir,
+    title
   })
+})
+
+ipcMain.on('create', (event, arg) => {
+  createWindow({
+    argv: "ls -l",
+    pwd: process.cwd(),
+    title: arg.title
+  })
+  const key = getStoreKey(arg.cmd, arg.dir)
+  const data = store.get(key)
+  console.log(data)
+  console.log(store.getStorageKeys())
 })
 
 ipcMain.on('cmd', (event, arg) => {
@@ -78,10 +109,6 @@ ipcMain.on('cmd', (event, arg) => {
     console.log(`cmd is ${cmd}`)
     event.sender.send('cmd-close')
   }
-
-  // createWindow()
-  // console.log("click in main process")
-  // event.sender.send('click1', "7777")
 })
 
 // Enable live reload for all the files inside your project directory
